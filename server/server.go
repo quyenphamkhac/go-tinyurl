@@ -1,6 +1,9 @@
 package server
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+	"github.com/quyenphamkhac/go-tinyurl/config"
+)
 
 func Serve() {
 	r := gin.Default()
@@ -13,5 +16,6 @@ func Serve() {
 			c.String(200, "pong")
 		})
 	}
-	r.Run()
+
+	r.Run(config.GetConfig().ServerConfig.Port)
 }
