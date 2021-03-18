@@ -3,6 +3,9 @@ package server
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/quyenphamkhac/go-tinyurl/config"
+	"github.com/quyenphamkhac/go-tinyurl/controllers"
+	"github.com/quyenphamkhac/go-tinyurl/repos"
+	"github.com/quyenphamkhac/go-tinyurl/services"
 )
 
 func Serve() {
@@ -15,6 +18,13 @@ func Serve() {
 		api.GET("/ping", func(c *gin.Context) {
 			c.String(200, "pong")
 		})
+		urls := api.Group("/urls")
+		{
+			urlRepo := new(repos.URLRespository)
+			urlService := services.NewUrlService(urlRepo)
+			urlCtrl := controllers.NewURLController(urlService)
+			urls.GET("/", urlCtrl.GetAllURLs)
+		}
 	}
 
 	r.Run(config.GetConfig().ServerConfig.Port)

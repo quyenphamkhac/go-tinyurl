@@ -2,7 +2,7 @@ package entities
 
 import "time"
 
-type Url struct {
+type URL struct {
 	Hash           string    `json:"hash,omitempty"`
 	OriginalURL    string    `json:"original_url,omitempty"`
 	CreationDate   time.Time `json:"creation_date,omitempty"`
