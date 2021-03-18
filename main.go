@@ -10,9 +10,10 @@ import (
 )
 
 func main() {
-	err := godotenv.Load(".env")
-	if err != nil {
-		log.Fatalf("[Error] loading .env file failed")
+	if os.Getenv("ENV") == "" {
+		if err := godotenv.Load(".env.dev"); err != nil {
+			log.Fatalf("[Error] loading .env file failed")
+		}
 	}
 	config.Init(os.Getenv("ENV"))
 	server.Serve()

@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/spf13/viper"
@@ -25,11 +26,11 @@ type Configuration struct {
 var config *Configuration
 
 func Init(env string) {
-	viper.SetConfigName(env)
-	viper.SetConfigType("yaml")
-	viper.AddConfigPath("config/")
+	fileConfig := fmt.Sprintf("config/%s.yaml", env)
+	fmt.Println(fileConfig)
+	viper.SetConfigFile(fileConfig)
 	if err := viper.ReadInConfig(); err != nil {
-		log.Fatal("[Error] Parsing config file failed")
+		log.Fatalf("[Error] Parsing config file failed: %s", err.Error())
 	}
 	config = &Configuration{
 		DbConfig: DbConfig{
