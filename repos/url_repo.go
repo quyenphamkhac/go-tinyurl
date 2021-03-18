@@ -9,8 +9,8 @@ import (
 type URLRespository struct {
 }
 
-func (r *URLRespository) GetAllURLs() []*entities.URL {
-	return []*entities.URL{
+func (r *URLRespository) GetAllURLs() []entities.URL {
+	return []entities.URL{
 		{
 			UserID:         "1",
 			OriginalURL:    "https://google.com",
