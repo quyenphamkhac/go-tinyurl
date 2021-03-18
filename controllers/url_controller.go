@@ -21,3 +21,7 @@ func (ctrl *URLController) GetAllURLs(c *gin.Context) {
 	urls := ctrl.service.GetAllURLs()
 	c.JSON(http.StatusOK, gin.H{"data": urls})
 }
+
+func (ctrl *URLController) HashURL(c *gin.Context) {
+
+}
