@@ -9,10 +9,11 @@ import (
 )
 
 func Serve() {
-	session := db.GetSession()
 	r := gin.Default()
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
+
+	session := db.GetSession()
 	api := r.Group("/api")
 	{
 		urls := api.Group("/urls")
