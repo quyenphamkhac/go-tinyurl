@@ -8,9 +8,9 @@ import (
 )
 
 type DbConfig struct {
-	Host         string
-	Port         string
-	DatabaseName string
+	Host     string
+	Port     string
+	KeySpace string
 }
 
 type ServerConfig struct {
@@ -27,16 +27,15 @@ var config *Configuration
 
 func Init(env string) {
 	fileConfig := fmt.Sprintf("config/%s.yaml", env)
-	fmt.Println(fileConfig)
 	viper.SetConfigFile(fileConfig)
 	if err := viper.ReadInConfig(); err != nil {
 		log.Fatalf("[Error] Parsing config file failed: %s", err.Error())
 	}
 	config = &Configuration{
 		DbConfig: DbConfig{
-			Host:         viper.GetString("cassandra.host"),
-			Port:         viper.GetString("cassandra.port"),
-			DatabaseName: viper.GetString("canssandra.database_name"),
+			Host:     viper.GetString("cassandra.host"),
+			Port:     viper.GetString("cassandra.port"),
+			KeySpace: viper.GetString("canssandra.key_space"),
 		},
 		ServerConfig: ServerConfig{
 			Host: viper.GetString("server.host"),

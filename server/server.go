@@ -2,9 +2,15 @@ package server
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/gocql/gocql"
 	"github.com/quyenphamkhac/go-tinyurl/controllers"
+	"github.com/quyenphamkhac/go-tinyurl/db"
 	"github.com/quyenphamkhac/go-tinyurl/repos"
 	"github.com/quyenphamkhac/go-tinyurl/services"
+)
+
+var (
+	session *gocql.Session = db.GetDb()
 )
 
 func Serve() {
@@ -15,7 +21,7 @@ func Serve() {
 	{
 		urls := api.Group("/urls")
 		{
-			urlRepo := new(repos.URLRespository)
+			urlRepo := repos.NewURLRepository(session)
 			urlService := services.NewUrlService(urlRepo)
 			urlCtrl := controllers.NewURLController(urlService)
 			urls.GET("/", urlCtrl.GetAllURLs)

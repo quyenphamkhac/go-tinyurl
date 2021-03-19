@@ -3,5 +3,5 @@ server:
   port: :3000
 cassandra:
   host: localhost
-  port: 7000
-  database_name: tinyurl
+  port: 9042
+  key_space: tinyurl

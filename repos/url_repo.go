@@ -1,22 +1,21 @@
 package repos
 
 import (
-	"time"
-
+	"github.com/gocql/gocql"
 	"github.com/quyenphamkhac/go-tinyurl/entities"
 )
 
 type URLRespository struct {
+	session *gocql.Session
+}
+
+func NewURLRepository(s *gocql.Session) *URLRespository {
+	return &URLRespository{
+		session: s,
+	}
 }
 
 func (r *URLRespository) GetAllURLs() []entities.URL {
-	return []entities.URL{
-		{
-			UserID:         "1",
-			OriginalURL:    "https://google.com",
-			CreationDate:   time.Now(),
-			ExpirationDate: time.Now().Add(604800 * time.Second),
-			Hash:           "4e932bc",
-		},
-	}
+	var urls []entities.URL
+	return urls
 }
