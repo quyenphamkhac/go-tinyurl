@@ -2,18 +2,14 @@ package server
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/gocql/gocql"
 	"github.com/quyenphamkhac/go-tinyurl/controllers"
 	"github.com/quyenphamkhac/go-tinyurl/db"
 	"github.com/quyenphamkhac/go-tinyurl/repos"
 	"github.com/quyenphamkhac/go-tinyurl/services"
 )
 
-var (
-	session *gocql.Session = db.GetDb()
-)
-
 func Serve() {
+	session := db.GetSession()
 	r := gin.Default()
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())

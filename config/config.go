@@ -35,7 +35,7 @@ func Init(env string) {
 		DbConfig: DbConfig{
 			Host:     viper.GetString("cassandra.host"),
 			Port:     viper.GetString("cassandra.port"),
-			KeySpace: viper.GetString("canssandra.key_space"),
+			KeySpace: viper.GetString("cassandra.key_space"),
 		},
 		ServerConfig: ServerConfig{
 			Host: viper.GetString("server.host"),
