@@ -23,6 +23,14 @@ func Serve() {
 			urlCtrl := controllers.NewURLController(urlService)
 			urls.GET("/", urlCtrl.GetAllURLs)
 		}
+
+		auth := api.Group("/auth")
+		{
+			userRepo := repos.NewUserRepository(session)
+			authService := services.NewAuthService(userRepo)
+			authCtrl := controllers.NewAuthController(authService)
+			auth.POST("/signup", authCtrl.SignUp)
+		}
 	}
 
 	r.Run()

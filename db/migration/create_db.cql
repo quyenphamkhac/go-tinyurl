@@ -4,7 +4,7 @@ WITH REPLICATION = { 'class' : 'SimpleStrategy','replication_factor' : 1 };
 USE tinyurl;
 
 CREATE TABLE users (
-  id text,
+  id uuid,
   username text,
   name text,
   hashed_password text,
