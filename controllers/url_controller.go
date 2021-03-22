@@ -51,7 +51,7 @@ func (ctrl *URLController) CreateURL(c *gin.Context) {
 	}
 	url, err := ctrl.service.CreateURL(&createURLDto, &entities.User{ID: uuid, Username: user.Username})
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"data": url})
