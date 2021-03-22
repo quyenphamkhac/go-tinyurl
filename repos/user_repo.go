@@ -54,7 +54,9 @@ func (r *UserRepository) ValidateUser(credentials *dtos.SignInDto) (*entities.Us
 	var found bool = false
 	m := map[string]interface{}{}
 	query := `SELECT * FROM users WHERE username = ? LIMIT 1`
-	iterable := r.session.Query(query, credentials.Username).Consistency(gocql.One).Iter()
+	ctx := context.Background()
+
+	iterable := r.session.Query(query, credentials.Username).WithContext(ctx).Consistency(gocql.One).Iter()
 	for iterable.MapScan(m) {
 		found = true
 		user = &entities.User{
