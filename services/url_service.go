@@ -1,6 +1,7 @@
 package services
 
 import (
+	"github.com/quyenphamkhac/go-tinyurl/dtos"
 	"github.com/quyenphamkhac/go-tinyurl/entities"
 	"github.com/quyenphamkhac/go-tinyurl/repos"
 )
@@ -15,6 +16,10 @@ func NewUrlService(r *repos.URLRespository) *URLService {
 	}
 }
 
-func (u *URLService) GetAllURLs() []entities.URL {
-	return u.repos.GetAllURLs()
+func (s *URLService) GetAllURLs() []entities.URL {
+	return s.repos.GetAllURLs()
+}
+
+func (s *URLService) CreateURL(createURLDto *dtos.CreateURLDto) (*entities.URL, error) {
+	return s.repos.CreateURL(createURLDto)
 }

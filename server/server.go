@@ -29,6 +29,7 @@ func Serve() {
 			urlService := services.NewUrlService(urlRepo)
 			urlCtrl := controllers.NewURLController(urlService)
 			urls.GET("/", urlCtrl.GetAllURLs)
+			urls.POST("/", urlCtrl.CreateURL)
 		}
 
 		auth := api.Group("/auth")

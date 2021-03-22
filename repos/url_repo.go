@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/gocql/gocql"
+	"github.com/quyenphamkhac/go-tinyurl/dtos"
 	"github.com/quyenphamkhac/go-tinyurl/entities"
 )
 
@@ -32,4 +33,8 @@ func (r *URLRespository) GetAllURLs() []entities.URL {
 		})
 	}
 	return urls
+}
+
+func (r *URLRespository) CreateURL(createURLDto *dtos.CreateURLDto) (*entities.URL, error) {
+	return &entities.URL{}, nil
 }
