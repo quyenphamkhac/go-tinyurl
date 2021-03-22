@@ -67,7 +67,7 @@ func (j *JwtService) VerifyToken(tokenString string) (*authClaims, error) {
 	claims := &authClaims{}
 
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(t *jwt.Token) (interface{}, error) {
-		return j.secret, nil
+		return []byte(j.secret), nil
 	})
 	if err != nil {
 		return nil, err
