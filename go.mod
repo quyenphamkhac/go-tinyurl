@@ -3,6 +3,7 @@ module github.com/quyenphamkhac/go-tinyurl
 go 1.16
 
 require (
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-gonic/gin v1.6.3
 	github.com/gocql/gocql v0.0.0-20210313142353-65899a66288b
 	github.com/joho/godotenv v1.3.0

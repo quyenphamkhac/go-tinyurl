@@ -48,3 +48,34 @@ func (r *UserRepository) CreateUser(userDto *dtos.SignUpDto) (*entities.User, er
 	}
 	return user, nil
 }
+
+func (r *UserRepository) ValidateUser(credentials *dtos.SignInDto) (*entities.User, error) {
+	var user *entities.User
+	var found bool = false
+	m := map[string]interface{}{}
+	query := `SELECT * FROM users WHERE username = ? LIMIT 1`
+	iterable := r.session.Query(query, credentials.Username).Consistency(gocql.One).Iter()
+	for iterable.MapScan(m) {
+		found = true
+		user = &entities.User{
+			ID:             m["id"].(string),
+			HashedPassword: m["hashed_password"].(string),
+			Username:       m["username"].(string),
+			Name:           m["name"].(string),
+			Email:          m["email"].(string),
+			CreationDate:   m["creation_date"].(time.Time),
+			LastLogin:      m["last_login"].(time.Time),
+		}
+	}
+	if !found {
+		return nil, errors.New("user not found")
+	}
+	isValid, err := user.ComparePassword(credentials.Password)
+	if err != nil {
+		return nil, err
+	}
+	if !isValid {
+		return nil, errors.New("invalid credentials")
+	}
+	return user, nil
+}

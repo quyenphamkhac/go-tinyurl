@@ -1,6 +1,8 @@
 package server
 
 import (
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/quyenphamkhac/go-tinyurl/controllers"
 	"github.com/quyenphamkhac/go-tinyurl/db"
@@ -27,9 +29,11 @@ func Serve() {
 		auth := api.Group("/auth")
 		{
 			userRepo := repos.NewUserRepository(session)
-			authService := services.NewAuthService(userRepo)
+			jwtService := services.NewJwtService(time.Hour * 2)
+			authService := services.NewAuthService(userRepo, jwtService)
 			authCtrl := controllers.NewAuthController(authService)
 			auth.POST("/signup", authCtrl.SignUp)
+			auth.POST("/login", authCtrl.Login)
 		}
 	}
 

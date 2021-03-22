@@ -31,3 +31,17 @@ func (ctrl *AuthController) SignUp(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"data": user})
 }
+
+func (ctrl *AuthController) Login(c *gin.Context) {
+	var credentials dtos.SignInDto
+	if err := c.ShouldBindJSON(&credentials); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	accessTokenResp, err := ctrl.service.Login(&credentials)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"data": accessTokenResp})
+}

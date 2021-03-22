@@ -18,9 +18,14 @@ type ServerConfig struct {
 	Port string
 }
 
+type JwtConfig struct {
+	Secret string
+}
+
 type Configuration struct {
 	DbConfig
 	ServerConfig
+	JwtConfig
 }
 
 var config *Configuration
@@ -40,6 +45,9 @@ func Init(env string) {
 		ServerConfig: ServerConfig{
 			Host: viper.GetString("server.host"),
 			Port: viper.GetString("server.port"),
+		},
+		JwtConfig: JwtConfig{
+			Secret: viper.GetString("jwt.secret"),
 		},
 	}
 }

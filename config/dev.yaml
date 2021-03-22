@@ -5,3 +5,5 @@ cassandra:
   host: localhost
   port: 9042
   key_space: tinyurl
+jwt:
+  secret: quy3npk1996
