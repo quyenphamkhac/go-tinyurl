@@ -36,12 +36,12 @@ func (r *UserRepository) CreateUser(userDto *dtos.SignUpDto) (*entities.User, er
 		Username:       userDto.Username,
 		Name:           userDto.Name,
 		HashedPassword: string(hashedPassword),
-		Email:          user.Email,
+		Email:          userDto.Email,
 		ID:             gocql.TimeUUID().String(),
 		CreationDate:   time.Now(),
 	}
 	ctx := context.Background()
-	if err := r.session.Query(`INSERT INTO users (username, name, hashed_password, email, id, creation_date) VALUES (?, ?, ?, ?, ?)`,
+	if err := r.session.Query(`INSERT INTO users (username, name, hashed_password, email, id, creation_date) VALUES (?, ?, ?, ?, ?, ?)`,
 		user.Username, user.Name, user.HashedPassword, user.Email, user.ID, user.CreationDate).WithContext(ctx).Exec(); err != nil {
 		return nil, err
 	}

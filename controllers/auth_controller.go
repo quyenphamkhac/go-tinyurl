@@ -19,12 +19,12 @@ func NewAuthController(s *services.AuthService) *AuthController {
 }
 
 func (ctrl *AuthController) SignUp(c *gin.Context) {
-	var userDto *dtos.SignUpDto
-	if err := c.ShouldBindJSON(userDto); err != nil {
+	var userDto dtos.SignUpDto
+	if err := c.ShouldBindJSON(&userDto); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	user, err := ctrl.service.SignUp(userDto)
+	user, err := ctrl.service.SignUp(&userDto)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
