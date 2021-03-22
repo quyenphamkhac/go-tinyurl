@@ -1,7 +1,7 @@
 package services
 
 import (
-	"fmt"
+	"errors"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -63,11 +63,21 @@ func (j *JwtService) GenerateJwtToken(user *entities.User) (*entities.AccessToke
 	return tokenResp, nil
 }
 
-func (j *JwtService) VerifyToken(token string) (*jwt.Token, error) {
-	return jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
-		if _, isValid := t.Method.(*jwt.SigningMethodHMAC); !isValid {
-			return nil, fmt.Errorf("invalid token %s", t.Header["alg"])
-		}
-		return []byte(j.secret), nil
+func (j *JwtService) VerifyToken(tokenString string) (*authClaims, error) {
+	claims := &authClaims{}
+
+	token, err := jwt.ParseWithClaims(tokenString, claims, func(t *jwt.Token) (interface{}, error) {
+		return j.secret, nil
 	})
+	if err != nil {
+		return nil, err
+	}
+	if !token.Valid {
+		return nil, errors.New("token invalid")
+	}
+	claims, ok := token.Claims.(*authClaims)
+	if !ok {
+		return nil, errors.New("claims retrieve failed")
+	}
+	return claims, nil
 }

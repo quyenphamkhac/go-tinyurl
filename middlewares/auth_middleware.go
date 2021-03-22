@@ -11,16 +11,20 @@ func AuthorizeWithJwt(jwtService *services.JwtService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
-			c.AbortWithStatus(http.StatusUnauthorized)
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"error": "Must provide Authorization header with format `Bearer {token}`",
+			})
 			return
 		}
 		token := authHeader[len("Bearer")+1:]
-		jwtToken, err := jwtService.VerifyToken(token)
+		claims, err := jwtService.VerifyToken(token)
 		if err != nil {
-			c.AbortWithStatus(http.StatusUnauthorized)
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"error": err.Error(),
+			})
+			return
 		}
-		if !jwtToken.Valid {
-			c.AbortWithStatus(http.StatusUnauthorized)
-		}
+		c.Set("user", claims.User)
+		c.Next()
 	}
 }
