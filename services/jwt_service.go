@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -9,12 +10,14 @@ import (
 )
 
 type JwtService struct {
-	ttl time.Duration
+	ttl    time.Duration
+	secret string
 }
 
-func NewJwtService(ttl time.Duration) *JwtService {
+func NewJwtService(ttl time.Duration, secret string) *JwtService {
 	return &JwtService{
-		ttl: ttl,
+		ttl:    ttl,
+		secret: secret,
 	}
 }
 
@@ -38,4 +41,13 @@ func (j *JwtService) GenerateJwtToken(user *entities.User) (*entities.AccessToke
 		UserID:      user.ID.String(),
 	}
 	return tokenResp, nil
+}
+
+func (j *JwtService) VerifyToken(token string) (*jwt.Token, error) {
+	return jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
+		if _, isValid := t.Method.(*jwt.SigningMethodHMAC); !isValid {
+			return nil, fmt.Errorf("invalid token %s", t.Header["alg"])
+		}
+		return []byte(j.secret), nil
+	})
 }

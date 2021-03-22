@@ -1,7 +1,6 @@
 package repos
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/gocql/gocql"
@@ -32,6 +31,5 @@ func (r *URLRespository) GetAllURLs() []entities.URL {
 			UserID:         m["user_id"].(string),
 		})
 	}
-	fmt.Println(urls)
 	return urls
 }
