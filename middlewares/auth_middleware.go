@@ -37,6 +37,5 @@ func AuthorizeWithJwt(jwtService *services.JwtService) gin.HandlerFunc {
 			return
 		}
 		c.Set("user", claims.User)
-		c.Next()
 	}
 }
