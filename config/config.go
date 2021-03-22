@@ -20,6 +20,7 @@ type ServerConfig struct {
 
 type JwtConfig struct {
 	Secret string
+	Issuer string
 }
 
 type Configuration struct {
@@ -48,6 +49,7 @@ func Init(env string) {
 		},
 		JwtConfig: JwtConfig{
 			Secret: viper.GetString("jwt.secret"),
+			Issuer: viper.GetString("jwt.issuer"),
 		},
 	}
 }

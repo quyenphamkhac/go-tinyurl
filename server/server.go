@@ -18,7 +18,7 @@ func Serve() {
 	r.Use(gin.Recovery())
 
 	session := db.GetSession()
-	jwtService := services.NewJwtService(time.Hour*2, config.GetConfig().Secret)
+	jwtService := services.NewJwtService(time.Hour*2, config.GetConfig().Secret, config.GetConfig().Issuer)
 
 	api := r.Group("/api")
 	{

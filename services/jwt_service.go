@@ -12,22 +12,42 @@ import (
 type JwtService struct {
 	ttl    time.Duration
 	secret string
+	issuer string
 }
 
-func NewJwtService(ttl time.Duration, secret string) *JwtService {
+type UserClaims struct {
+	Username string `json:"username"`
+	UserID   string `json:"user_id"`
+}
+
+type authClaims struct {
+	User *UserClaims `json:"user"`
+	jwt.StandardClaims
+}
+
+func NewJwtService(ttl time.Duration, secret string, issuer string) *JwtService {
 	return &JwtService{
 		ttl:    ttl,
 		secret: secret,
+		issuer: issuer,
 	}
 }
 
 func (j *JwtService) GenerateJwtToken(user *entities.User) (*entities.AccessTokenResponse, error) {
 	var tokenResp *entities.AccessTokenResponse
-	claims := jwt.MapClaims{}
-	claims["user_id"] = user.ID
-	claims["name"] = user.Name
-	claims["iat"] = time.Now().Unix()
-	claims["exp"] = time.Now().Add(j.ttl).Unix()
+	issuedAt := time.Now().Unix()
+	expiresAt := time.Now().Add(j.ttl).Unix()
+	claims := authClaims{
+		User: &UserClaims{
+			Username: user.Username,
+			UserID:   user.ID.String(),
+		},
+		StandardClaims: jwt.StandardClaims{
+			IssuedAt:  issuedAt,
+			ExpiresAt: expiresAt,
+			Issuer:    j.issuer,
+		},
+	}
 	tokenWithClaims := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	secret := config.GetConfig().Secret
 	token, err := tokenWithClaims.SignedString([]byte(secret))
