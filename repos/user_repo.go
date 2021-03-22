@@ -37,7 +37,7 @@ func (r *UserRepository) CreateUser(userDto *dtos.SignUpDto) (*entities.User, er
 		Name:           userDto.Name,
 		HashedPassword: string(hashedPassword),
 		Email:          userDto.Email,
-		ID:             gocql.TimeUUID().String(),
+		ID:             gocql.TimeUUID(),
 		CreationDate:   time.Now(),
 		LastLogin:      time.Now(),
 	}
@@ -53,14 +53,14 @@ func (r *UserRepository) ValidateUser(credentials *dtos.SignInDto) (*entities.Us
 	var user *entities.User
 	var found bool = false
 	m := map[string]interface{}{}
-	query := `SELECT * FROM users WHERE username = ? LIMIT 1`
+	query := `SELECT * FROM users WHERE username = ? LIMIT 1 ALLOW FILTERING`
 	ctx := context.Background()
 
 	iterable := r.session.Query(query, credentials.Username).WithContext(ctx).Consistency(gocql.One).Iter()
 	for iterable.MapScan(m) {
 		found = true
 		user = &entities.User{
-			ID:             m["id"].(string),
+			ID:             m["id"].(gocql.UUID),
 			HashedPassword: m["hashed_password"].(string),
 			Username:       m["username"].(string),
 			Name:           m["name"].(string),

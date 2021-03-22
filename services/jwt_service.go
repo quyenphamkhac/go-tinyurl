@@ -35,7 +35,7 @@ func (j *JwtService) GenerateJwtToken(user *entities.User) (*entities.AccessToke
 		AccessToken: token,
 		TTL:         int(j.ttl.Seconds()),
 		ExpiredAt:   time.Now().Add(j.ttl),
-		UserID:      user.ID,
+		UserID:      user.ID.String(),
 	}
 	return tokenResp, nil
 }
