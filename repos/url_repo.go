@@ -1,11 +1,14 @@
 package repos
 
 import (
+	"context"
+	"errors"
 	"time"
 
 	"github.com/gocql/gocql"
 	"github.com/quyenphamkhac/go-tinyurl/dtos"
 	"github.com/quyenphamkhac/go-tinyurl/entities"
+	"github.com/teris-io/shortid"
 )
 
 type URLRespository struct {
@@ -35,6 +38,28 @@ func (r *URLRespository) GetAllURLs() []entities.URL {
 	return urls
 }
 
-func (r *URLRespository) CreateURL(createURLDto *dtos.CreateURLDto) (*entities.URL, error) {
-	return &entities.URL{}, nil
+func (r *URLRespository) CreateURL(createURLDto *dtos.CreateURLDto, user *entities.User) (*entities.URL, error) {
+	hash, err := shortid.Generate()
+	if err != nil {
+		return nil, errors.New("can't generate new hash")
+	}
+	var tinyurl *entities.URL
+	var count int
+	r.session.Query("SELECT COUNT(*) FROM urls WHERE user_id = ? AND original_url = ? ALLOW FILTERING", user.ID.String(), createURLDto.OriginalURL).Iter().Scan(&count)
+	if count > 0 {
+		return nil, errors.New("url already hashed")
+	}
+	tinyurl = &entities.URL{
+		Hash:           hash,
+		OriginalURL:    createURLDto.OriginalURL,
+		CreationDate:   time.Now(),
+		ExpirationDate: time.Now().Add(14 * time.Hour * 24),
+		UserID:         user.ID.String(),
+	}
+	ctx := context.Background()
+	if err := r.session.Query(`INSERT INTO urls (hash, original_url, creation_date, expiration_date, user_id) VALUES (?, ?, ?, ?, ?)`,
+		tinyurl.Hash, tinyurl.OriginalURL, tinyurl.CreationDate, tinyurl.ExpirationDate, tinyurl.UserID).WithContext(ctx).Exec(); err != nil {
+		return nil, err
+	}
+	return tinyurl, nil
 }

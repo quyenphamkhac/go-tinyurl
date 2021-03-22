@@ -20,6 +20,6 @@ func (s *URLService) GetAllURLs() []entities.URL {
 	return s.repos.GetAllURLs()
 }
 
-func (s *URLService) CreateURL(createURLDto *dtos.CreateURLDto) (*entities.URL, error) {
-	return s.repos.CreateURL(createURLDto)
+func (s *URLService) CreateURL(createURLDto *dtos.CreateURLDto, user *entities.User) (*entities.URL, error) {
+	return s.repos.CreateURL(createURLDto, user)
 }

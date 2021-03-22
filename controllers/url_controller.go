@@ -1,10 +1,13 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gocql/gocql"
 	"github.com/quyenphamkhac/go-tinyurl/dtos"
+	"github.com/quyenphamkhac/go-tinyurl/entities"
 	"github.com/quyenphamkhac/go-tinyurl/services"
 )
 
@@ -29,7 +32,24 @@ func (ctrl *URLController) CreateURL(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	url, err := ctrl.service.CreateURL(&createURLDto)
+	userClaims, isExisted := c.Get("user")
+
+	if !isExisted {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "can't get context user"})
+		return
+	}
+	user, ok := userClaims.(*services.UserClaims)
+	fmt.Println(userClaims)
+	if !ok {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "context user invalid"})
+		return
+	}
+	uuid, err := gocql.ParseUUID(user.UserID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "cant parse uuid"})
+		return
+	}
+	url, err := ctrl.service.CreateURL(&createURLDto, &entities.User{ID: uuid, Username: user.Username})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
