@@ -12,17 +12,23 @@ import (
 )
 
 type URLRespository struct {
-	session *gocql.Session
+	session   *gocql.Session
+	cacheRepo *CacheRepository
 }
 
-func NewURLRepository(s *gocql.Session) *URLRespository {
+func NewURLRepository(s *gocql.Session, c *CacheRepository) *URLRespository {
 	return &URLRespository{
-		session: s,
+		session:   s,
+		cacheRepo: c,
 	}
 }
 
 func (r *URLRespository) GetURLByHash(hash string, user *entities.UserClaims) (*entities.URL, error) {
 	var url *entities.URL
+	url = r.cacheRepo.GetURL(hash)
+	if url != nil {
+		return url, nil
+	}
 	m := map[string]interface{}{}
 	var found bool = false
 	query := "SELECT * FROM urls WHERE user_id = ? AND hash = ? LIMIT 1 ALLOW FILTERING"
@@ -40,6 +46,7 @@ func (r *URLRespository) GetURLByHash(hash string, user *entities.UserClaims) (*
 	if !found {
 		return nil, errors.New("url not found")
 	}
+	r.cacheRepo.SetURL(url)
 	return url, nil
 }
 

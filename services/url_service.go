@@ -1,7 +1,6 @@
 package services
 
 import (
-	"github.com/go-redis/cache/v8"
 	"github.com/quyenphamkhac/go-tinyurl/dtos"
 	"github.com/quyenphamkhac/go-tinyurl/entities"
 	"github.com/quyenphamkhac/go-tinyurl/repos"
@@ -9,13 +8,11 @@ import (
 
 type URLService struct {
 	repos *repos.URLRespository
-	cache *cache.Cache
 }
 
-func NewUrlService(r *repos.URLRespository, c *cache.Cache) *URLService {
+func NewUrlService(r *repos.URLRespository) *URLService {
 	return &URLService{
 		repos: r,
-		cache: c,
 	}
 }
 

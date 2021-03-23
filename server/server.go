@@ -20,14 +20,15 @@ func Serve() {
 	session := datasources.GetSession()
 	jwtService := services.NewJwtService(time.Hour*2, config.GetConfig().Secret, config.GetConfig().Issuer)
 	cache := datasources.GetRedisCache()
+	cacheRepo := repos.NewCacheRepository(cache)
 
 	api := r.Group("/api")
 	{
 		urls := api.Group("/urls")
 		urls.Use(middlewares.AuthorizeWithJwt(jwtService))
 		{
-			urlRepo := repos.NewURLRepository(session)
-			urlService := services.NewUrlService(urlRepo, cache)
+			urlRepo := repos.NewURLRepository(session, cacheRepo)
+			urlService := services.NewUrlService(urlRepo)
 			urlCtrl := controllers.NewURLController(urlService)
 			urls.GET("/", urlCtrl.GetAllURLs)
 			urls.GET("/:hash", urlCtrl.GetURLByHash)
