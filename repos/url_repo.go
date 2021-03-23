@@ -21,6 +21,28 @@ func NewURLRepository(s *gocql.Session) *URLRespository {
 	}
 }
 
+func (r *URLRespository) GetURLByHash(hash string, user *entities.UserClaims) (*entities.URL, error) {
+	var url *entities.URL
+	m := map[string]interface{}{}
+	var found bool = false
+	query := "SELECT * FROM urls WHERE user_id = ? AND hash = ? LIMIT 1 ALLOW FILTERING"
+	iterable := r.session.Query(query, user.UserID, hash).Iter()
+	for iterable.MapScan(m) {
+		found = true
+		url = &entities.URL{
+			Hash:           m["hash"].(string),
+			OriginalURL:    m["original_url"].(string),
+			CreationDate:   m["creation_date"].(time.Time),
+			ExpirationDate: m["expiration_date"].(time.Time),
+			UserID:         m["user_id"].(string),
+		}
+	}
+	if !found {
+		return nil, errors.New("url not found")
+	}
+	return url, nil
+}
+
 func (r *URLRespository) GetAllURLs() []entities.URL {
 	var urls []entities.URL
 	m := map[string]interface{}{}

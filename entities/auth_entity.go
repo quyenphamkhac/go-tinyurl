@@ -9,5 +9,10 @@ type AccessTokenResponse struct {
 	UserID      string    `json:"user_id"`
 }
 
+type UserClaims struct {
+	Username string `json:"username"`
+	UserID   string `json:"user_id"`
+}
+
 type RefreshToken struct {
 }

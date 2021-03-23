@@ -15,13 +15,8 @@ type JwtService struct {
 	issuer string
 }
 
-type UserClaims struct {
-	Username string `json:"username"`
-	UserID   string `json:"user_id"`
-}
-
 type authClaims struct {
-	User *UserClaims `json:"user"`
+	User *entities.UserClaims `json:"user"`
 	jwt.StandardClaims
 }
 
@@ -38,7 +33,7 @@ func (j *JwtService) GenerateJwtToken(user *entities.User) (*entities.AccessToke
 	issuedAt := time.Now().Unix()
 	expiresAt := time.Now().Add(j.ttl).Unix()
 	claims := authClaims{
-		User: &UserClaims{
+		User: &entities.UserClaims{
 			Username: user.Username,
 			UserID:   user.ID.String(),
 		},

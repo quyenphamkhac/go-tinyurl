@@ -38,7 +38,7 @@ func (ctrl *URLController) CreateURL(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "can't get context user"})
 		return
 	}
-	user, ok := userClaims.(*services.UserClaims)
+	user, ok := userClaims.(*entities.UserClaims)
 	fmt.Println(userClaims)
 	if !ok {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "context user invalid"})
@@ -50,6 +50,27 @@ func (ctrl *URLController) CreateURL(c *gin.Context) {
 		return
 	}
 	url, err := ctrl.service.CreateURL(&createURLDto, &entities.User{ID: uuid, Username: user.Username})
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"data": url})
+}
+
+func (ctrl *URLController) GetURLByHash(c *gin.Context) {
+	var getURLByHashDto dtos.GetURLByHashDto
+	if err := c.ShouldBindUri(&getURLByHashDto); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	userClaims, isExisted := c.Get("user")
+
+	if !isExisted {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "can't get context user"})
+		return
+	}
+	user := userClaims.(*entities.UserClaims)
+	url, err := ctrl.service.GetURLByHash(getURLByHashDto.Hash, user)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
