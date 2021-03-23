@@ -1,2 +1,2 @@
 # go-tinyurl
-go-tinyurl :  url shortener using golang, gin &amp; mongodb
+go-tinyurl :  url shortener using golang, gin, redis &amp; cassandra
