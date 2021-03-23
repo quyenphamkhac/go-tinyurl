@@ -13,6 +13,12 @@ type DbConfig struct {
 	KeySpace string
 }
 
+type RedisConfig struct {
+	Host string
+	Port string
+	Addr string
+}
+
 type ServerConfig struct {
 	Host string
 	Port string
@@ -27,6 +33,7 @@ type Configuration struct {
 	DbConfig
 	ServerConfig
 	JwtConfig
+	RedisConfig
 }
 
 var config *Configuration
@@ -50,6 +57,11 @@ func Init(env string) {
 		JwtConfig: JwtConfig{
 			Secret: viper.GetString("jwt.secret"),
 			Issuer: viper.GetString("jwt.issuer"),
+		},
+		RedisConfig: RedisConfig{
+			Host: viper.GetString("redis.host"),
+			Port: viper.GetString("redis.port"),
+			Addr: viper.GetString("redis.addr"),
 		},
 	}
 }

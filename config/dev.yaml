@@ -8,3 +8,7 @@ cassandra:
 jwt:
   secret: quy3npk1996
   issuer: quyenpk
+redis:
+  host: localhost
+  port: 6379
+  addr: localhost:6379
