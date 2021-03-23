@@ -1,6 +1,15 @@
 cassandra:
 	docker run --name cassandra3 -p 7000:7000 -p 7001:7001 -p 7199:7199 -p 9160:9160 -p 9042:9042 -d cassandra:3
 
+redis:
+	docker run --name redis6 -p 6379:6379 -d redis:6
+
+startredis:
+	docker start redis6
+
+stopredis:
+	docker stop redis6
+
 startdb:
 	docker start cassandra3
 
@@ -18,4 +27,4 @@ dropdb:
 dev:
 	go run main.go
 
-.PHONY: cassandra migratedb dropdb
+.PHONY: cassandra migratedb dropdb redis startredis stopredis
