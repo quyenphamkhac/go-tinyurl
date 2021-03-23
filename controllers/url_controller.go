@@ -70,10 +70,24 @@ func (ctrl *URLController) GetURLByHash(c *gin.Context) {
 		return
 	}
 	user := userClaims.(*entities.UserClaims)
-	url, err := ctrl.service.GetURLByHash(getURLByHashDto.Hash, user)
+	url, err := ctrl.service.GetUserURLByHash(getURLByHashDto.Hash, user)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"data": url})
+}
+
+func (ctrl *URLController) RedirectURLByHash(c *gin.Context) {
+	var getURLByHashDto dtos.GetURLByHashDto
+	if err := c.ShouldBindUri(&getURLByHashDto); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	url, err := ctrl.service.GetURLByHash(getURLByHashDto.Hash)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.Redirect(http.StatusMovedPermanently, url.OriginalURL)
 }

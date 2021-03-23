@@ -22,14 +22,25 @@ func Serve() {
 	cache := datasources.GetRedisCache()
 	cacheRepo := repos.NewCacheRepository(cache)
 
+	urlRepo := repos.NewURLRepository(session, cacheRepo)
+	urlService := services.NewUrlService(urlRepo)
+	urlCtrl := controllers.NewURLController(urlService)
+
+	userRepo := repos.NewUserRepository(session)
+	authService := services.NewAuthService(userRepo, jwtService)
+	authCtrl := controllers.NewAuthController(authService)
+
+	main := r.Group("/tinyurl")
+	{
+		main.GET("/:hash", urlCtrl.RedirectURLByHash)
+	}
+
 	api := r.Group("/api")
 	{
 		urls := api.Group("/urls")
 		urls.Use(middlewares.AuthorizeWithJwt(jwtService))
 		{
-			urlRepo := repos.NewURLRepository(session, cacheRepo)
-			urlService := services.NewUrlService(urlRepo)
-			urlCtrl := controllers.NewURLController(urlService)
+
 			urls.GET("/", urlCtrl.GetAllURLs)
 			urls.GET("/:hash", urlCtrl.GetURLByHash)
 			urls.POST("/", urlCtrl.CreateURL)
@@ -37,12 +48,10 @@ func Serve() {
 
 		auth := api.Group("/auth")
 		{
-			userRepo := repos.NewUserRepository(session)
-			authService := services.NewAuthService(userRepo, jwtService)
-			authCtrl := controllers.NewAuthController(authService)
 			auth.POST("/signup", authCtrl.SignUp)
 			auth.POST("/login", authCtrl.Login)
 		}
+
 	}
 
 	r.Run()
