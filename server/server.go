@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/quyenphamkhac/go-tinyurl/config"
 	"github.com/quyenphamkhac/go-tinyurl/controllers"
-	"github.com/quyenphamkhac/go-tinyurl/db"
+	"github.com/quyenphamkhac/go-tinyurl/datasources"
 	"github.com/quyenphamkhac/go-tinyurl/middlewares"
 	"github.com/quyenphamkhac/go-tinyurl/repos"
 	"github.com/quyenphamkhac/go-tinyurl/services"
@@ -17,7 +17,7 @@ func Serve() {
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
 
-	session := db.GetSession()
+	session := datasources.GetSession()
 	jwtService := services.NewJwtService(time.Hour*2, config.GetConfig().Secret, config.GetConfig().Issuer)
 
 	api := r.Group("/api")

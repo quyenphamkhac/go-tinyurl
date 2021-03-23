@@ -1,4 +1,4 @@
-package db
+package datasources
 
 import (
 	"log"
