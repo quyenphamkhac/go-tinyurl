@@ -12,7 +12,7 @@ func ErrorsMiddleware(errorType gin.ErrorType) gin.HandlerFunc {
 		c.Next()
 		var appError *apperrors.AppError
 		errors := c.Errors.ByType(errorType)
-		if len(errors) < 0 {
+		if len(errors) > 0 {
 			err := errors[0].Err
 			switch err := err.(type) {
 			case *apperrors.AppError:

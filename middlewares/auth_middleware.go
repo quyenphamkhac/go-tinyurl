@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/quyenphamkhac/go-tinyurl/pkg/apperrors"
 	"github.com/quyenphamkhac/go-tinyurl/services"
 )
 
@@ -16,24 +17,17 @@ func AuthorizeWithJwt(jwtService *services.JwtService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var h authorizeHeader
 		if err := c.ShouldBindHeader(&h); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error": err.Error(),
-			})
+			c.Error(apperrors.New(http.StatusBadRequest, err.Error()))
+			return
 		}
 		token := strings.Split(h.Token, "Bearer ")
 		if len(token) < 2 {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error": "Must provide Authorization header with format `Bearer {token}`",
-			})
-			c.Abort()
+			c.Error(apperrors.New(http.StatusUnauthorized, "Must provide Authorization header with format `Bearer {token}`"))
 			return
 		}
 		claims, err := jwtService.VerifyToken(token[1])
 		if err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{
-				"error": err.Error(),
-			})
-			c.Abort()
+			c.Error(apperrors.New(http.StatusUnauthorized, err.Error()))
 			return
 		}
 		c.Set("user", claims.User)
