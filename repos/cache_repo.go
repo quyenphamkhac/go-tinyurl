@@ -2,7 +2,6 @@ package repos
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/go-redis/cache/v8"
@@ -27,7 +26,7 @@ func (c *CacheRepository) SetURL(url *entities.URL) {
 		Value: url,
 		TTL:   time.Hour,
 	}); err != nil {
-		fmt.Println("[Error] Redis set URL fails: ", err.Error())
+		return
 	}
 }
 
@@ -36,7 +35,6 @@ func (c *CacheRepository) GetURL(hash string) *entities.URL {
 	ctx := context.TODO()
 	err := c.cache.Get(ctx, hash, &url)
 	if err != nil {
-		fmt.Println("[Error] Redis get URL fails: ", err.Error())
 		return nil
 	}
 	return &url
