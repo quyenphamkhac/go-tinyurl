@@ -41,8 +41,6 @@ func Serve() {
 		urls := api.Group("/urls")
 		urls.Use(middlewares.AuthorizeWithJwt(jwtService))
 		{
-
-			urls.GET("/", urlCtrl.GetAllURLs)
 			urls.GET("/:hash", urlCtrl.GetURLByHash)
 			urls.POST("/", urlCtrl.CreateURL)
 		}
