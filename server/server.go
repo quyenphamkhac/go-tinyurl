@@ -50,7 +50,6 @@ func Serve() {
 			auth.POST("/signup", authCtrl.SignUp)
 			auth.POST("/login", authCtrl.Login)
 		}
-
 	}
 
 	r.Run()
