@@ -40,7 +40,7 @@ func (ctrl *AuthController) Login(c *gin.Context) {
 	}
 	accessTokenResp, err := ctrl.service.Login(&credentials)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.Error(err)
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"data": accessTokenResp})

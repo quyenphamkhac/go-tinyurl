@@ -16,6 +16,7 @@ func Serve() {
 	r := gin.Default()
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
+	r.Use(middlewares.ErrorsMiddleware(gin.ErrorTypeAny))
 
 	session := datasources.GetSession()
 	jwtService := services.NewJwtService(time.Hour*2, config.GetConfig().Secret, config.GetConfig().Issuer)
