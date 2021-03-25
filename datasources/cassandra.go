@@ -1,6 +1,7 @@
 package datasources
 
 import (
+	"log"
 	"sync"
 
 	"github.com/gocql/gocql"
@@ -19,7 +20,7 @@ func GetCassandraSession() *gocql.Session {
 		cluster.Keyspace = config.GetConfig().KeySpace
 		session, err = cluster.CreateSession()
 		if err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 	})
 	return session
