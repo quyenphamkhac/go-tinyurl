@@ -2,6 +2,14 @@
 
 Go Tinyurl is a url shortener project. It's "Independent", "Testable" , and "Clean" based on articles: https://medium.com/hackernoon/golang-clean-archithecture-efd6d7c43047
 
+![Image](clean-arch.png "clean-arch")
+
+## Technical stack
+1. Go
+2. Gin framework
+3. Cassandra
+4. Redis Caching
+5. Docker
 
 ## Installation
 
