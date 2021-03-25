@@ -13,6 +13,3 @@ type UserClaims struct {
 	Username string `json:"username"`
 	UserID   string `json:"user_id"`
 }
-
-type RefreshToken struct {
-}
