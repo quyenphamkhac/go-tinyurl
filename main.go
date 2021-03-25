@@ -6,7 +6,6 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/quyenphamkhac/go-tinyurl/config"
-	"github.com/quyenphamkhac/go-tinyurl/datasources"
 	"github.com/quyenphamkhac/go-tinyurl/server"
 )
 
@@ -17,6 +16,5 @@ func main() {
 		}
 	}
 	config.Init(os.Getenv("ENV"))
-	datasources.InitDatabase()
 	server.Serve()
 }
