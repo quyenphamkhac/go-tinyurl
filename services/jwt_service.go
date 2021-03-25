@@ -15,11 +15,6 @@ type JwtService struct {
 	issuer string
 }
 
-type authClaims struct {
-	User *models.UserClaims `json:"user"`
-	jwt.StandardClaims
-}
-
 func NewJwtService(ttl time.Duration, secret string, issuer string) *JwtService {
 	return &JwtService{
 		ttl:    ttl,
@@ -32,7 +27,7 @@ func (j *JwtService) GenerateJwtToken(user *models.User) (*models.AccessTokenRes
 	var tokenResp *models.AccessTokenResponse
 	issuedAt := time.Now().Unix()
 	expiresAt := time.Now().Add(j.ttl).Unix()
-	claims := authClaims{
+	claims := models.AuthClaims{
 		User: &models.UserClaims{
 			Username: user.Username,
 			UserID:   user.ID.String(),
@@ -58,8 +53,8 @@ func (j *JwtService) GenerateJwtToken(user *models.User) (*models.AccessTokenRes
 	return tokenResp, nil
 }
 
-func (j *JwtService) VerifyToken(tokenString string) (*authClaims, error) {
-	claims := &authClaims{}
+func (j *JwtService) VerifyToken(tokenString string) (*models.AuthClaims, error) {
+	claims := &models.AuthClaims{}
 
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(t *jwt.Token) (interface{}, error) {
 		return []byte(j.secret), nil
@@ -70,7 +65,7 @@ func (j *JwtService) VerifyToken(tokenString string) (*authClaims, error) {
 	if !token.Valid {
 		return nil, errors.New("token invalid")
 	}
-	claims, ok := token.Claims.(*authClaims)
+	claims, ok := token.Claims.(*models.AuthClaims)
 	if !ok {
 		return nil, errors.New("claims retrieve failed")
 	}

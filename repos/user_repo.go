@@ -21,22 +21,22 @@ func NewUserRepository(s *gocql.Session) *UserRepository {
 	}
 }
 
-func (r *UserRepository) CreateUser(userDto *dtos.SignUpDto) (*models.User, error) {
+func (r *UserRepository) CreateUser(createUserDto *dtos.SignUpDto) (*models.User, error) {
 	var user *models.User
 	var count int
-	r.session.Query("SELECT COUNT(*) FROM users WHERE username = ? ALLOW FILTERING", userDto.Username).Iter().Scan(&count)
+	r.session.Query("SELECT COUNT(*) FROM users WHERE username = ? ALLOW FILTERING", createUserDto.Username).Iter().Scan(&count)
 	if count > 0 {
 		return user, errors.New("user already exists")
 	}
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userDto.Password), bcrypt.DefaultCost)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(createUserDto.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return user, err
 	}
 	user = &models.User{
-		Username:       userDto.Username,
-		Name:           userDto.Name,
+		Username:       createUserDto.Username,
+		Name:           createUserDto.Name,
 		HashedPassword: string(hashedPassword),
-		Email:          userDto.Email,
+		Email:          createUserDto.Email,
 		ID:             gocql.TimeUUID(),
 		CreationDate:   time.Now(),
 		LastLogin:      time.Now(),

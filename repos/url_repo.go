@@ -77,7 +77,7 @@ func (r *URLRespository) GetUserURLByHash(hash string, user *models.UserClaims) 
 	return url, nil
 }
 
-func (r *URLRespository) GetAllURLs() []models.URL {
+func (r *URLRespository) GetAllURLs() ([]models.URL, error) {
 	var urls []models.URL
 	m := map[string]interface{}{}
 	query := "SELECT * FROM urls"
@@ -91,7 +91,7 @@ func (r *URLRespository) GetAllURLs() []models.URL {
 			UserID:         m["user_id"].(string),
 		})
 	}
-	return urls
+	return urls, nil
 }
 
 func (r *URLRespository) CreateURL(createURLDto *dtos.CreateURLDto, user *models.User) (*models.URL, error) {

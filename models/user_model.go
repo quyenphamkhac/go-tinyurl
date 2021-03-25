@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/gocql/gocql"
+	"github.com/quyenphamkhac/go-tinyurl/dtos"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -15,6 +16,11 @@ type User struct {
 	Email          string     `json:"email,omitempty"`
 	CreationDate   time.Time  `json:"creation_date,omitempty"`
 	LastLogin      time.Time  `json:"last_login,omitempty"`
+}
+
+type UserRepository interface {
+	CreateUser(createUserDto *dtos.SignUpDto) (*User, error)
+	ValidateUser(credentials *dtos.SignInDto) (*User, error)
 }
 
 func (u *User) ComparePassword(password string) (bool, error) {

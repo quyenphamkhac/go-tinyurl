@@ -16,7 +16,7 @@ func NewUrlService(r *repos.URLRespository) *URLService {
 	}
 }
 
-func (s *URLService) GetAllURLs() []models.URL {
+func (s *URLService) GetAllURLs() ([]models.URL, error) {
 	return s.repos.GetAllURLs()
 }
 
