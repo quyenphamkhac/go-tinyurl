@@ -13,10 +13,10 @@ import (
 
 type URLRespository struct {
 	session   *gocql.Session
-	cacheRepo *CacheRepository
+	cacheRepo models.URLCache
 }
 
-func NewURLRepository(s *gocql.Session, c *CacheRepository) *URLRespository {
+func NewURLRepository(s *gocql.Session, c models.URLCache) *URLRespository {
 	return &URLRespository{
 		session:   s,
 		cacheRepo: c,

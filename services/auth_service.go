@@ -3,15 +3,14 @@ package services
 import (
 	"github.com/quyenphamkhac/go-tinyurl/dtos"
 	"github.com/quyenphamkhac/go-tinyurl/models"
-	"github.com/quyenphamkhac/go-tinyurl/repos"
 )
 
 type AuthService struct {
-	userRepo   *repos.UserRepository
-	jwtService *JwtService
+	userRepo   models.UserRepository
+	jwtService models.JwtService
 }
 
-func NewAuthService(r *repos.UserRepository, j *JwtService) *AuthService {
+func NewAuthService(r models.UserRepository, j models.JwtService) *AuthService {
 	return &AuthService{
 		userRepo:   r,
 		jwtService: j,

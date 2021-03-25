@@ -15,15 +15,15 @@ type URL struct {
 }
 
 type URLRepository interface {
-	GetUserURLByHash(hash string, user *User) (*URL, error)
+	GetUserURLByHash(hash string, user *UserClaims) (*URL, error)
 	GetURLByHash(hash string) (*URL, error)
 	GetAllURLs() ([]URL, error)
-	CreateURL(createURLDto *dtos.CreateURLDto) (*URL, error)
+	CreateURL(createURLDto *dtos.CreateURLDto, user *User) (*URL, error)
 }
 
 type URLService interface {
-	GetUserURLByHash(hash string, user *User) (*URL, error)
+	GetUserURLByHash(hash string, user *UserClaims) (*URL, error)
 	GetURLByHash(hash string) (*URL, error)
 	GetAllURLs() ([]URL, error)
-	CreateURL(createURLDto *dtos.CreateURLDto) (*URL, error)
+	CreateURL(createURLDto *dtos.CreateURLDto, user *User) (*URL, error)
 }
