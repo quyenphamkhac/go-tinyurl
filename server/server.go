@@ -18,7 +18,7 @@ func Serve() {
 	r.Use(gin.Recovery())
 	r.Use(middlewares.ErrorsMiddleware(gin.ErrorTypeAny))
 
-	session := datasources.GetSession()
+	session := datasources.GetCassandraSession()
 	jwtService := services.NewJwtService(time.Hour*2, config.GetConfig().Secret, config.GetConfig().Issuer)
 	cache := datasources.GetRedisCache()
 	cacheRepo := repos.NewCacheRepository(cache)

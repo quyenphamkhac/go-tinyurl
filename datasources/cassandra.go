@@ -1,24 +1,26 @@
 package datasources
 
 import (
-	"log"
+	"sync"
 
 	"github.com/gocql/gocql"
 	"github.com/quyenphamkhac/go-tinyurl/config"
 )
 
-var session *gocql.Session
+var (
+	initCanssandraOnce sync.Once
+	session            *gocql.Session
+)
 
-func InitDatabase() {
-	cluster := gocql.NewCluster(config.GetConfig().DbConfig.Host)
-	cluster.Keyspace = config.GetConfig().KeySpace
-	var err error
-	session, err = cluster.CreateSession()
-	if err != nil {
-		log.Fatal("[Error] Create session failed")
-	}
-}
-
-func GetSession() *gocql.Session {
+func GetCassandraSession() *gocql.Session {
+	initCanssandraOnce.Do(func() {
+		var err error
+		cluster := gocql.NewCluster(config.GetConfig().DbConfig.Host)
+		cluster.Keyspace = config.GetConfig().KeySpace
+		session, err = cluster.CreateSession()
+		if err != nil {
+			panic(err)
+		}
+	})
 	return session
 }
