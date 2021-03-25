@@ -6,7 +6,7 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/quyenphamkhac/go-tinyurl/config"
-	"github.com/quyenphamkhac/go-tinyurl/entities"
+	"github.com/quyenphamkhac/go-tinyurl/models"
 )
 
 type JwtService struct {
@@ -16,7 +16,7 @@ type JwtService struct {
 }
 
 type authClaims struct {
-	User *entities.UserClaims `json:"user"`
+	User *models.UserClaims `json:"user"`
 	jwt.StandardClaims
 }
 
@@ -28,12 +28,12 @@ func NewJwtService(ttl time.Duration, secret string, issuer string) *JwtService 
 	}
 }
 
-func (j *JwtService) GenerateJwtToken(user *entities.User) (*entities.AccessTokenResponse, error) {
-	var tokenResp *entities.AccessTokenResponse
+func (j *JwtService) GenerateJwtToken(user *models.User) (*models.AccessTokenResponse, error) {
+	var tokenResp *models.AccessTokenResponse
 	issuedAt := time.Now().Unix()
 	expiresAt := time.Now().Add(j.ttl).Unix()
 	claims := authClaims{
-		User: &entities.UserClaims{
+		User: &models.UserClaims{
 			Username: user.Username,
 			UserID:   user.ID.String(),
 		},
@@ -49,7 +49,7 @@ func (j *JwtService) GenerateJwtToken(user *entities.User) (*entities.AccessToke
 	if err != nil {
 		return nil, err
 	}
-	tokenResp = &entities.AccessTokenResponse{
+	tokenResp = &models.AccessTokenResponse{
 		AccessToken: token,
 		TTL:         int(j.ttl.Seconds()),
 		ExpiredAt:   time.Now().Add(j.ttl),

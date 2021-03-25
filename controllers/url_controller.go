@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gocql/gocql"
 	"github.com/quyenphamkhac/go-tinyurl/dtos"
-	"github.com/quyenphamkhac/go-tinyurl/entities"
+	"github.com/quyenphamkhac/go-tinyurl/models"
 	"github.com/quyenphamkhac/go-tinyurl/pkg/apperrors"
 	"github.com/quyenphamkhac/go-tinyurl/services"
 )
@@ -33,13 +33,13 @@ func (ctrl *URLController) CreateURL(c *gin.Context) {
 		c.Error(apperrors.New(http.StatusBadRequest, "User Claims Not Found"))
 		return
 	}
-	user := userClaims.(*entities.UserClaims)
+	user := userClaims.(*models.UserClaims)
 	uuid, err := gocql.ParseUUID(user.UserID)
 	if err != nil {
 		c.Error(apperrors.New(http.StatusBadRequest, "User Claims Invalid"))
 		return
 	}
-	url, err := ctrl.service.CreateURL(&createURLDto, &entities.User{ID: uuid, Username: user.Username})
+	url, err := ctrl.service.CreateURL(&createURLDto, &models.User{ID: uuid, Username: user.Username})
 	if err != nil {
 		c.Error(apperrors.New(http.StatusInternalServerError, err.Error()))
 		return
@@ -59,7 +59,7 @@ func (ctrl *URLController) GetURLByHash(c *gin.Context) {
 		c.Error(apperrors.New(http.StatusBadRequest, "User Claims Not Found"))
 		return
 	}
-	user := userClaims.(*entities.UserClaims)
+	user := userClaims.(*models.UserClaims)
 	url, err := ctrl.service.GetUserURLByHash(getURLByHashDto.Hash, user)
 	if err != nil {
 		c.Error(apperrors.New(http.StatusInternalServerError, err.Error()))

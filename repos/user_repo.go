@@ -7,7 +7,7 @@ import (
 
 	"github.com/gocql/gocql"
 	"github.com/quyenphamkhac/go-tinyurl/dtos"
-	"github.com/quyenphamkhac/go-tinyurl/entities"
+	"github.com/quyenphamkhac/go-tinyurl/models"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -21,8 +21,8 @@ func NewUserRepository(s *gocql.Session) *UserRepository {
 	}
 }
 
-func (r *UserRepository) CreateUser(userDto *dtos.SignUpDto) (*entities.User, error) {
-	var user *entities.User
+func (r *UserRepository) CreateUser(userDto *dtos.SignUpDto) (*models.User, error) {
+	var user *models.User
 	var count int
 	r.session.Query("SELECT COUNT(*) FROM users WHERE username = ? ALLOW FILTERING", userDto.Username).Iter().Scan(&count)
 	if count > 0 {
@@ -32,7 +32,7 @@ func (r *UserRepository) CreateUser(userDto *dtos.SignUpDto) (*entities.User, er
 	if err != nil {
 		return user, err
 	}
-	user = &entities.User{
+	user = &models.User{
 		Username:       userDto.Username,
 		Name:           userDto.Name,
 		HashedPassword: string(hashedPassword),
@@ -49,8 +49,8 @@ func (r *UserRepository) CreateUser(userDto *dtos.SignUpDto) (*entities.User, er
 	return user, nil
 }
 
-func (r *UserRepository) ValidateUser(credentials *dtos.SignInDto) (*entities.User, error) {
-	var user *entities.User
+func (r *UserRepository) ValidateUser(credentials *dtos.SignInDto) (*models.User, error) {
+	var user *models.User
 	var found bool = false
 	m := map[string]interface{}{}
 	query := `SELECT * FROM users WHERE username = ? LIMIT 1 ALLOW FILTERING`
@@ -59,7 +59,7 @@ func (r *UserRepository) ValidateUser(credentials *dtos.SignInDto) (*entities.Us
 	iterable := r.session.Query(query, credentials.Username).WithContext(ctx).Consistency(gocql.One).Iter()
 	for iterable.MapScan(m) {
 		found = true
-		user = &entities.User{
+		user = &models.User{
 			ID:             m["id"].(gocql.UUID),
 			HashedPassword: m["hashed_password"].(string),
 			Username:       m["username"].(string),

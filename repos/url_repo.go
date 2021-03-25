@@ -7,7 +7,7 @@ import (
 
 	"github.com/gocql/gocql"
 	"github.com/quyenphamkhac/go-tinyurl/dtos"
-	"github.com/quyenphamkhac/go-tinyurl/entities"
+	"github.com/quyenphamkhac/go-tinyurl/models"
 	"github.com/teris-io/shortid"
 )
 
@@ -23,8 +23,8 @@ func NewURLRepository(s *gocql.Session, c *CacheRepository) *URLRespository {
 	}
 }
 
-func (r *URLRespository) GetURLByHash(hash string) (*entities.URL, error) {
-	var url *entities.URL
+func (r *URLRespository) GetURLByHash(hash string) (*models.URL, error) {
+	var url *models.URL
 	url = r.cacheRepo.GetURL(hash)
 	if url != nil {
 		return url, nil
@@ -35,7 +35,7 @@ func (r *URLRespository) GetURLByHash(hash string) (*entities.URL, error) {
 	iterable := r.session.Query(query, hash).Iter()
 	for iterable.MapScan(m) {
 		found = true
-		url = &entities.URL{
+		url = &models.URL{
 			Hash:           m["hash"].(string),
 			OriginalURL:    m["original_url"].(string),
 			CreationDate:   m["creation_date"].(time.Time),
@@ -50,8 +50,8 @@ func (r *URLRespository) GetURLByHash(hash string) (*entities.URL, error) {
 	return url, nil
 }
 
-func (r *URLRespository) GetUserURLByHash(hash string, user *entities.UserClaims) (*entities.URL, error) {
-	var url *entities.URL
+func (r *URLRespository) GetUserURLByHash(hash string, user *models.UserClaims) (*models.URL, error) {
+	var url *models.URL
 	url = r.cacheRepo.GetURL(hash)
 	if url != nil {
 		return url, nil
@@ -62,7 +62,7 @@ func (r *URLRespository) GetUserURLByHash(hash string, user *entities.UserClaims
 	iterable := r.session.Query(query, user.UserID, hash).Iter()
 	for iterable.MapScan(m) {
 		found = true
-		url = &entities.URL{
+		url = &models.URL{
 			Hash:           m["hash"].(string),
 			OriginalURL:    m["original_url"].(string),
 			CreationDate:   m["creation_date"].(time.Time),
@@ -77,13 +77,13 @@ func (r *URLRespository) GetUserURLByHash(hash string, user *entities.UserClaims
 	return url, nil
 }
 
-func (r *URLRespository) GetAllURLs() []entities.URL {
-	var urls []entities.URL
+func (r *URLRespository) GetAllURLs() []models.URL {
+	var urls []models.URL
 	m := map[string]interface{}{}
 	query := "SELECT * FROM urls"
 	iterable := r.session.Query(query).Iter()
 	for iterable.MapScan(m) {
-		urls = append(urls, entities.URL{
+		urls = append(urls, models.URL{
 			Hash:           m["hash"].(string),
 			OriginalURL:    m["original_url"].(string),
 			CreationDate:   m["creation_date"].(time.Time),
@@ -94,18 +94,18 @@ func (r *URLRespository) GetAllURLs() []entities.URL {
 	return urls
 }
 
-func (r *URLRespository) CreateURL(createURLDto *dtos.CreateURLDto, user *entities.User) (*entities.URL, error) {
+func (r *URLRespository) CreateURL(createURLDto *dtos.CreateURLDto, user *models.User) (*models.URL, error) {
 	hash, err := shortid.Generate()
 	if err != nil {
 		return nil, errors.New("can't generate new hash")
 	}
-	var tinyurl *entities.URL
+	var tinyurl *models.URL
 	var count int
 	r.session.Query("SELECT COUNT(*) FROM urls WHERE user_id = ? AND original_url = ? ALLOW FILTERING", user.ID.String(), createURLDto.OriginalURL).Iter().Scan(&count)
 	if count > 0 {
 		return nil, errors.New("url already hashed")
 	}
-	tinyurl = &entities.URL{
+	tinyurl = &models.URL{
 		Hash:           hash,
 		OriginalURL:    createURLDto.OriginalURL,
 		CreationDate:   time.Now(),

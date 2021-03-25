@@ -2,7 +2,7 @@ package services
 
 import (
 	"github.com/quyenphamkhac/go-tinyurl/dtos"
-	"github.com/quyenphamkhac/go-tinyurl/entities"
+	"github.com/quyenphamkhac/go-tinyurl/models"
 	"github.com/quyenphamkhac/go-tinyurl/repos"
 )
 
@@ -18,12 +18,12 @@ func NewAuthService(r *repos.UserRepository, j *JwtService) *AuthService {
 	}
 }
 
-func (s *AuthService) SignUp(userDto *dtos.SignUpDto) (*entities.User, error) {
+func (s *AuthService) SignUp(userDto *dtos.SignUpDto) (*models.User, error) {
 	return s.userRepo.CreateUser(userDto)
 }
 
-func (s *AuthService) Login(credentials *dtos.SignInDto) (*entities.AccessTokenResponse, error) {
-	var token *entities.AccessTokenResponse
+func (s *AuthService) Login(credentials *dtos.SignInDto) (*models.AccessTokenResponse, error) {
+	var token *models.AccessTokenResponse
 	user, err := s.userRepo.ValidateUser(credentials)
 	if err != nil {
 		return nil, err
